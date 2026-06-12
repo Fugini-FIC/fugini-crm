@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { supabase } from '@/lib/supabase'
 
-const API = 'https://fugini-crm.vercel.app/api'
+const API = 'https://fugini-checkin-api.vercel.app/api'
 const MESES = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO',
                'JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO']
 const DIAS_SEMANA = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB']
