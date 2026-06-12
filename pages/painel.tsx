@@ -4,15 +4,12 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { supabase } from '@/lib/supabase'
 
-const MAPA_URLS: Record<string, { url: string; senha: string }> = {
-  SC01:   { url: 'https://fugini-fic.github.io/fugini-mapa-sc/vendedor_sc.html', senha: 'fugini@sc1' },
-  MASTER: { url: 'https://fugini-fic.github.io/fugini-mapa-sc/master_sc.html',  senha: 'fugini@master_sc' },
-}
-
 interface Vendedor {
   cod_vendedor: string
   nome: string
   role: string
+  mapa_url: string | null
+  mapa_senha: string | null
 }
 
 export default function Painel() {
@@ -27,13 +24,12 @@ export default function Painel() {
 
       const { data } = await supabase
         .from('vendedores')
-        .select('cod_vendedor, nome, role')
+        .select('cod_vendedor, nome, role, mapa_url, mapa_senha')
         .eq('email', user.email)
         .single()
 
       if (data) {
         setVendedor(data)
-        // Salva cod_vendedor no localStorage para agenda e checkin usarem
         localStorage.setItem('cod_vendedor', data.cod_vendedor)
       }
       setLoading(false)
@@ -54,8 +50,9 @@ export default function Painel() {
     </div>
   )
 
-  const mapaConfig = vendedor ? (MAPA_URLS[vendedor.cod_vendedor] || MAPA_URLS['MASTER']) : null
-  const mapaUrl    = mapaConfig ? `${mapaConfig.url}#${mapaConfig.senha}` : '#'
+  const mapaUrl = (vendedor?.mapa_url && vendedor?.mapa_senha)
+    ? `${vendedor.mapa_url}#${vendedor.mapa_senha}`
+    : null
 
   return (
     <>
@@ -111,13 +108,15 @@ export default function Painel() {
               Ferramentas
             </div>
 
-            <a href={mapaUrl} style={btnStyle}>
-              <div style={iconStyle}>🗺️</div>
-              <div>
-                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>Mapa de Clientes</strong>
-                <span style={{ fontSize: 12, color: '#888' }}>Visualizar clientes na região</span>
-              </div>
-            </a>
+            {mapaUrl && (
+              <a href={mapaUrl} style={btnStyle}>
+                <div style={iconStyle}>🗺️</div>
+                <div>
+                  <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>Mapa de Clientes</strong>
+                  <span style={{ fontSize: 12, color: '#888' }}>Visualizar clientes na região</span>
+                </div>
+              </a>
+            )}
 
             <a href="/agenda" style={btnStyle}>
               <div style={iconStyle}>📅</div>
